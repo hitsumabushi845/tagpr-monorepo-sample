@@ -6,3 +6,4 @@ This directory is a release target for targetA.
 
 - Initial test change to trigger tagpr
 - Second test change to verify tagpr workflow
+- Test change for targetA
