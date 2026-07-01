@@ -2,3 +2,4 @@
     vPrefix = true
     releaseBranch = main
     tagPrefix = targetB
+    changelogFile = targetB/CHANGELOG.md
