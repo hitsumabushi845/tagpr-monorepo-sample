@@ -18,13 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Detect changed targets
         id: detect
         run: |
           TARGETS=()
-          CHANGED=$(git diff HEAD~1 --name-only 2>/dev/null || git diff --name-only HEAD)
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git diff --name-only HEAD)
+          else
+            CHANGED=$(git diff --name-only "${BEFORE}" "${{ github.sha }}")
+          fi
 
           for dir in targetA targetB; do
             if echo "$CHANGED" | grep -q "^${dir}/"; then
@@ -46,6 +51,7 @@ jobs:
     if: needs.detect-targets.outputs.has_targets == 'true'
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         target: ${{ fromJson(needs.detect-targets.outputs.targets) }}
     steps:
